@@ -29,16 +29,24 @@ export default deployScript(
       args: [balloons.address],
     });
 
-    // // CHECKPOINT 2: Replace with your front-end address to get 10 balloons on deploy.
-    // // Default is the Hardhat test account #1 — works out-of-the-box on local.
-    // const frontendAddress = "YOUR_FRONTEND_ADDRESS";
-    // await execute(balloons, { functionName: "transfer", args: [frontendAddress, parseEther("10")], account: deployer });
+    // Send 10 balloons to the frontend address (your MetaMask account)
+    const frontendAddress = "0x2b39f858cbd44530CFe1C34984F6242eA2C01c24";
+    await execute(balloons, {
+      functionName: "transfer",
+      args: [frontendAddress, parseEther("10")],
+      account: deployer,
+    });
 
-    // // CHECKPOINT 3: Uncomment to init DEX on deploy:
-    // console.log("Approving DEX (" + dex.address + ") to take Balloons from main account...");
-    // await execute(balloons, { functionName: "approve", args: [dex.address, parseEther("100")], account: deployer });
-    // console.log("INIT exchange...");
-    // await execute(dex, { functionName: "init", args: [parseEther("5")], value: parseEther("5"), account: deployer });
+    // Init the DEX with 0.01 ETH and 0.01 BAL so the live pool has liquidity
+    console.log("Approving DEX (" + dex.address + ") to take Balloons from main account...");
+    await execute(balloons, { functionName: "approve", args: [dex.address, parseEther("100")], account: deployer });
+    console.log("INIT exchange...");
+    await execute(dex, {
+      functionName: "init",
+      args: [parseEther("0.01")],
+      value: parseEther("0.01"),
+      account: deployer,
+    });
   },
   // Tags are useful if you have multiple deploy files and only want to run one of them.
   // e.g. yarn deploy --tags DEX
